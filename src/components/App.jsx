@@ -1,30 +1,33 @@
-import { Component } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Searchbar } from './Searchbar/Searchbar';
 import { ImageGallery } from './ImageGallery/ImageGallery';
 import { Loader } from './Loader/Loader';
 import { Button } from './Button/Button';
-import Modal from './Modal/Modal';
+import {Modal} from './Modal/Modal';
 import { fetchPhotos } from 'services/fetchPhotos';
 import { Wrapper, ErrorMsg } from './Loader/Loader.styled';
 
-export class App extends Component {
-  state = {
-    searchPicture: '',
-    pictures: [],
-    page: 1,
-    search: '',
-    nextSearch: '',
-    isLoading: false,
-    error: null,
-    isLoadMoreBtn: false,
-    modal: {
-      show: false,
-      img: null,
-    },
-  };
+export const App = () => {
+  // const [searchPicture, setSearchPicture] = useState('');
+  const [pictures, setPictures] = useState([]);
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState('');
+  const [nextSearch, setNextSearch] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [isLoadMoreBtn, setIsLoadMoreBtn] = useState(false);
+  const [show, setShow] = useState(false);
+  const [img, setImg] = useState(null);
+  
+  // state = {
 
-  updatePictures = async newSearch => {
-    const { page, pictures, search } = this.state;
+  //   modal: {
+  //     show: false,
+  //     img: null,
+  //   },
+  // };
+
+  const updatePictures = useCallback(async newSearch => {
 
     try {
       const photos = await fetchPhotos(newSearch, page);
@@ -32,77 +35,67 @@ export class App extends Component {
       if (photos.length !== 0) {
         const newPictures = [...oldPictures, ...photos];
         if (search !== newSearch) {
-          this.setState({ pictures: photos, page: 1 });
+          setPictures(() => photos);
         }
         if (search === newSearch) {
-          this.setState({ pictures: newPictures, page: page + 1 });
+          setPictures(() => newPictures);
         }
         if (photos.length < 12) {
-          this.setState({ isLoadMoreBtn: true });
-         
+          setIsLoadMoreBtn(() => true);
+
         }
       } else {
         alert('Sorry, no image matching');
       }
     } catch (error) {
-      this.setState({ error });
+      setError(() => error);
     } finally {
-      this.setState({ isLoading: false });
+      setIsLoading(() => false);
     }
+  }, [page, pictures, search]);
+
+  const resetArray = (searchPicture) => {
+    setSearch(() => searchPicture);
+    setIsLoading(() => true);
+    setPictures(() => []);
+    setPage(() => 1);
+  
   };
 
-  resetArray = (searchPicture) => {
-    this.setState({
-      search: searchPicture,
-      isLoading: true,
-      pictures: [],
-      page: 1,
-    });
+  const changeSearchValue = ({searchPicture }) => {
+    resetArray(searchPicture);
+    updatePictures(searchPicture);
+  };
+  const loadMorePictures = () => {
+    updatePictures(nextSearch);
   };
 
-  changeSearchValue = (searchPicture ) => {
-    this.resetArray(searchPicture);
-    this.updatePictures(searchPicture);
-  };
-  loadMorePictures = () => {
-    const { nextSearch } = this.state;
-    this.updatePictures(nextSearch);
-  };
-
-  async componentDidUpdate() {
-    const { search, nextSearch } = this.state;
+  useEffect(() => {
+  
     if (nextSearch !== search) {
-      this.updatePictures(search);
-      this.setState({ nextSearch: search });
+      updatePictures(search);
+      setNextSearch(search);
     }
-  }
+  }, [search, nextSearch, updatePictures]);
 
-  openModalWindow = e => {
+  const openModalWindow = e => {
+    const largeImg = e.target.dataset.img;
     if (e.target.nodeName !== 'IMG') {
       return;
     }
-    this.setState({
-      largeImg: e.target.dataset.img,
-      show: true,
-    });
+    setImg(()=>largeImg)
+      // largeImg: e.target.dataset.img,
+    setShow(()=>true);
+    
   };
 
-  closeModalWindow = () => {
-    this.setState({ show: false });
+  const closeModalWindow = () => {
+   setShow(()=> false);
   };
-  render() {
-    const {
-      error,
-      pictures,
-      isLoading,
-      show,
-      largeImg,
-      isLoadMoreBtn,
-    } = this.state;
 
     return (
       <Wrapper>
-        <Searchbar newSearch={this.changeSearchValue} />
+        <Searchbar newSearch={changeSearchValue} />
         {error && (
           <ErrorMsg>Whoops, something went wrong: {error.message}</ErrorMsg>
         )}
@@ -110,18 +103,18 @@ export class App extends Component {
         {pictures.length > 0 && (
           <ImageGallery
             pictures={pictures}
-            openModalWindow={this.openModalWindow}
+            openModalWindow={openModalWindow}
           />
         )}
         {isLoading && <Loader />}
         {pictures.length > 0 && !isLoadMoreBtn && (
-          <Button text="Load more" func={this.loadMorePictures} />
+          <Button text="Load more" func={loadMorePictures} />
         )}
 
         {show && (
-          <Modal item={largeImg} closeModalWindow={this.closeModalWindow} />
+          <Modal largeImg={img} closeModalWindow={closeModalWindow} />
         )}
       </Wrapper>
     );
   }
-}
+
