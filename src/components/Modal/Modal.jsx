@@ -1,32 +1,38 @@
-import { Component } from 'react';
+import {useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Overlay, ModalWindow } from './Modal.styled';
 
-export default class Modal extends Component {
-  componentDidMount() {
-    window.addEventListener('keydown', this.handleKeyDown);
-  }
+export const Modal= ()=> {
+  const[isCloseModalWindow,setCloseModalWindow]=useState(false)
 
-  componentWillUnmount() {
-    window.removeEventListener('keydown', this.handleKeyDown);
-  }
-
-  handleKeyDown = e => {
-    if (e.code === 'Escape') {
-      return this.props.closeModalWindow();
-    }
-  };
-  render() {
-    const { item } = this.props;
+  useEffect(() => {
+    const handleKeyDown = e => {
+      if (e.code === 'Escape') {
+        setCloseModalWindow();
+      }
+      window.addEventListener('keydown', handleKeyDown);
+      return () => {
+        window.removeEventListener('keydown', handleKeyDown);
+      }
+    };
+  }, []);
+  // useEffect(() => {
+  //   const handleKeyDown = e => console.log("keydown event: ", e);
+  //   document.addEventListener("keydown", handleKeyDown);
+  //   return () => {
+  //     document.removeEventListener("keydown", handleKeyDown);
+  //   };
+  // }, []);
+ 
     return (
-      <Overlay onClick={this.handleKeyDown}>
+      <Overlay onClick={handleKeyDown}>
         <ModalWindow>
           <img src={item} alt="" />
         </ModalWindow>
       </Overlay>
     );
   }
-}
+
 
 Modal.propTypes = {
   item: PropTypes.string,
