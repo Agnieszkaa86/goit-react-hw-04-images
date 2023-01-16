@@ -7,10 +7,9 @@ export const Searchbar = ({newSearch}) => {
   const [searchPicture, setSearchPicture] = useState('');
   const valueSubmit = e => {
     setSearchPicture(e.target.searchPicture.value);
-    console.log(e.target.searchPicture.value)
     e.preventDefault();
     newSearch({ searchPicture });
-    console.log(newSearch)
+    setSearchPicture('');
   };
 
     return (
