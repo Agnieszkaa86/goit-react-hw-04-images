@@ -2,8 +2,8 @@ import {useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Overlay, ModalWindow } from './Modal.styled';
 
-export const Modal= ()=> {
-  const[isCloseModalWindow,setCloseModalWindow]=useState(false)
+export const Modal= (item, )=> {
+  const[CloseModalWindow,setCloseModalWindow]=useState(false)
 
   useEffect(() => {
     const handleKeyDown = e => {
