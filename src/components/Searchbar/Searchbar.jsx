@@ -4,12 +4,11 @@ import { Header, Form, SearchBtn, Input } from './Searchbar.styled';
 import PropTypes from 'prop-types';
 
 export const Searchbar = ({newSearch}) => {
-  const [searchPicture, setSearchPicture] = useState('');
+  const [search, setSearch] = useState('');
   const valueSubmit = e => {
-    setSearchPicture(e.target.searchPicture.value);
+    setSearch(e.target.value);
     e.preventDefault();
-    newSearch({ searchPicture });
-    setSearchPicture('');
+    newSearch(search);
   };
 
     return (
@@ -26,6 +25,7 @@ export const Searchbar = ({newSearch}) => {
               name="searchPicture"
               autoFocus
               autoComplete="off"
+             value={search}
             />
           </Form>
         </Header>
