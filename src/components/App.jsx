@@ -8,7 +8,6 @@ import { fetchPhotos } from 'services/fetchPhotos';
 import { Wrapper, ErrorMsg } from './Loader/Loader.styled';
 
 export const App = () => {
-  // const [searchPicture, setSearchPicture] = useState('');
   const [pictures, setPictures] = useState([]);
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
@@ -18,8 +17,7 @@ export const App = () => {
   const [isLoadMoreBtn, setIsLoadMoreBtn] = useState(false);
   const [show, setShow] = useState(false);
   const [img, setImg] = useState(null);
-  
-  // state = {
+
 
   //   modal: {
   //     show: false,
@@ -27,9 +25,13 @@ export const App = () => {
   //   },
   // };
 
-  const updatePictures = useCallback(async newSearch => {
+  const updatePictures = useCallback(async (newSearch) => {
 
     try {
+      if (search !== newSearch) {
+        setPage(() => 1);
+      }
+      setIsLoading(() => true)
       const photos = await fetchPhotos(newSearch, page);
       const oldPictures = pictures;
       if (photos.length !== 0) {
@@ -39,10 +41,10 @@ export const App = () => {
         }
         if (search === newSearch) {
           setPictures(() => newPictures);
+          setPage((oldPage) => oldPage + 1);
         }
         if (photos.length < 12) {
           setIsLoadMoreBtn(() => true);
-
         }
       } else {
         alert('Sorry, no image matching');
@@ -62,10 +64,10 @@ export const App = () => {
   
   };
 
-  const changeSearchValue = ({searchPicture }) => {
+  function changeSearchValue(searchPicture) {
     resetArray(searchPicture);
     updatePictures(searchPicture);
-  };
+  }
   const loadMorePictures = () => {
     updatePictures(nextSearch);
   };
@@ -84,7 +86,6 @@ export const App = () => {
       return;
     }
     setImg(()=>largeImg)
-      // largeImg: e.target.dataset.img,
     setShow(()=>true);
     
   };
