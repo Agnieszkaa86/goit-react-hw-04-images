@@ -21,37 +21,37 @@ export const App = () => {
   const updatePictures = useCallback(
     async newSearch => {
       try {
-        setIsLoading(() => true);
+        setIsLoading(true);
         const photos = await fetchPhotos(newSearch, page);
         const oldPictures = pictures;
         if (photos.length !== 0) {
           const newPictures = [...oldPictures, ...photos];
           if (search !== newSearch) {
-            setPictures(() => photos);
+            setPictures(photos);
           }
           if (search === newSearch) {
-            setPictures(() => newPictures);
+            setPictures(newPictures);
           }
           if (photos.length < 12) {
-            setIsLoadMoreBtn(() => true);
+            setIsLoadMoreBtn(true);
           }
         } else {
           alert('Sorry, no image matching');
         }
       } catch (error) {
-        setError(() => error);
+        setError(error);
       } finally {
-        setIsLoading(() => false);
+        setIsLoading(false);
       }
     },
     [page, pictures, search]
   );
 
   const resetArray = searchPicture => {
-    setSearch(() => searchPicture);
-    setIsLoading(() => true);
-    setPictures(() => []);
-    setPage(() => 1);
+    setSearch(searchPicture);
+    setIsLoading(true);
+    setPictures([]);
+    setPage(1);
   };
 
   function changeSearchValue(searchPicture) {
@@ -74,12 +74,12 @@ export const App = () => {
     if (e.target.nodeName !== 'IMG') {
       return;
     }
-    setLargeImg(() => largeImg);
-    setShow(() => true);
+    setLargeImg(largeImg);
+    setShow(true);
   };
 
   const closeModalWindow = () => {
-    setShow(() => false);
+    setShow(false);
   };
 
   return (
@@ -97,7 +97,7 @@ export const App = () => {
         <Button text="Load more" func={loadMorePictures} />
       )}
 
-      {show && <Modal item={largeImg} closeModalWindow={closeModalWindow} />}
+      {show && <Modal imgSrc={largeImg} closeModalWindow={closeModalWindow} />}
     </Wrapper>
   );
 };
