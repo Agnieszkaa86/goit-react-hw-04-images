@@ -5,7 +5,7 @@ import { Overlay, ModalWindow } from './Modal.styled';
 
 export function Modal({ closeModalWindow, imgSrc }) {
    const handleKeyDown = e => {
-      if (e.code === 'Escape') {
+     if (e.code === 'Escape') {
         closeModalWindow();
       }
   };
