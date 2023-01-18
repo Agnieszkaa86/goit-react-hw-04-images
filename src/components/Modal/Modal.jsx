@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Overlay, ModalWindow } from './Modal.styled';
 
 
-export function Modal({ closeModalWindow, item}) {
+export function Modal({ closeModalWindow, imgSrc}) {
   useEffect(() => {
    window.addEventListener("keydown", handleKeyDown);
     return () => {
@@ -19,7 +19,7 @@ export function Modal({ closeModalWindow, item}) {
   return (
     <Overlay onClick={handleKeyDown}>
       <ModalWindow>
-        <img src={item} alt="" />
+        <img src={imgSrc} alt="" />
       </ModalWindow>
     </Overlay>
   );
@@ -27,6 +27,6 @@ export function Modal({ closeModalWindow, item}) {
 
 
 Modal.propTypes = {
-  item: PropTypes.string,
+  imgSrc: PropTypes.string,
   closeModalWindow: PropTypes.func,
 };
