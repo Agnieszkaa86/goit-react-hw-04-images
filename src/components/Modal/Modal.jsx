@@ -3,7 +3,13 @@ import PropTypes from 'prop-types';
 import { Overlay, ModalWindow } from './Modal.styled';
 
 
-export function Modal({ closeModalWindow, imgSrc}) {
+export function Modal({ closeModalWindow, imgSrc }) {
+   const handleKeyDown = e => {
+      if (e.code === 'Escape') {
+        closeModalWindow();
+      }
+  };
+  
   useEffect(() => {
    window.addEventListener("keydown", handleKeyDown);
     return () => {
@@ -11,11 +17,7 @@ export function Modal({ closeModalWindow, imgSrc}) {
     };
   });
 
-   const handleKeyDown = e => {
-      if (e.code === 'Escape') {
-        closeModalWindow();
-      }
-    };
+  
   return (
     <Overlay onClick={handleKeyDown}>
       <ModalWindow>
